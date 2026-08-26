@@ -31,6 +31,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'role',
         'avatar_url',
         'grade',
         'target_icfes_score',

@@ -165,4 +165,94 @@ class TestDbController extends Controller
             ])
         ]);
     }
+
+    /**
+     * Prueba mínima de verificación de arquitectura híbrida (MySQL + MongoDB Atlas).
+     */
+    public function verifyHybridDatabase(): JsonResponse
+    {
+        $mysqlStatus = 'unknown';
+        $userCount = 0;
+        try {
+            \Illuminate\Support\Facades\DB::connection('mysql')->getPdo();
+            $userCount = User::count();
+            $mysqlStatus = 'connected';
+        } catch (\Throwable $e) {
+            $mysqlStatus = 'error: ' . $e->getMessage();
+        }
+
+        $mongoStatus = 'unknown';
+        $testResult = null;
+        try {
+            $testDoc = \App\Models\Mongo\AiConversation::create([
+                'user_id' => 1,
+                'title' => 'Conversación de prueba híbrida',
+                'messages' => [
+                    ['sender' => 'user', 'text' => 'Hola ATHENA']
+                ],
+                'context' => ['test' => true],
+            ]);
+
+            $foundDoc = \App\Models\Mongo\AiConversation::find($testDoc->_id);
+            $readSuccess = $foundDoc !== null && $foundDoc->title === 'Conversación de prueba híbrida';
+
+            $testDoc->delete();
+            $deletedDoc = \App\Models\Mongo\AiConversation::find($testDoc->_id);
+            $deleteSuccess = $deletedDoc === null;
+
+            $mongoStatus = 'connected_and_verified';
+            $testResult = [
+                'write' => true,
+                'read' => $readSuccess,
+                'delete' => $deleteSuccess,
+            ];
+        } catch (\Throwable $e) {
+            $mongoStatus = 'pending_credentials_or_unreachable: ' . $e->getMessage();
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'modulo' => 'Verificación de Arquitectura Híbrida (MySQL + MongoDB Atlas)',
+            'mysql' => [
+                'status' => $mysqlStatus,
+                'total_usuarios_mysql' => $userCount,
+            ],
+            'mongodb' => [
+                'status' => $mongoStatus,
+                'prueba_crud_temporal' => $testResult,
+            ]
+        ]);
+    }
+
+    /**
+     * GET /api/test-db/gemini
+     * Diagnóstico de conexión real con la API de Google Gemini Flash.
+     */
+    public function testGeminiConnection(): JsonResponse
+    {
+        try {
+            $geminiService = app(\App\Services\GeminiService::class);
+            $responseText = $geminiService->generateText("Responde únicamente: ATHENA Gemini funcionando.");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Gemini conectado correctamente.',
+                'data' => [
+                    'response' => $responseText,
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            $apiKey = config('services.gemini.api_key') ?: env('GEMINI_API_KEY');
+            $safeMessage = preg_replace('/key=[a-zA-Z0-9_\-]+/', 'key=***HIDDEN***', $e->getMessage());
+            if (!empty($apiKey)) {
+                $safeMessage = str_replace($apiKey, '***HIDDEN***', $safeMessage);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al conectar con Gemini: ' . $safeMessage,
+                'errors' => [],
+            ], 500);
+        }
+    }
 }
