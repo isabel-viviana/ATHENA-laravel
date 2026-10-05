@@ -48,7 +48,7 @@ class ExamController extends Controller
                 'message' => 'Error al configurar el simulacro: ' . $e->getMessage(),
                 'errors' => [],
             ], 400);
-        }
+        } 
     }
 
     /**
