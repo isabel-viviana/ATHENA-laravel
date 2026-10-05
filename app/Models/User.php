@@ -15,23 +15,36 @@ use App\Models\UserAchievement;
 use App\Models\Notification;
 use App\Models\Subscription;
 use App\Models\AiChatSession;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    public const ROLE_STUDENT = 'student';
+    public const ROLE_ADMIN = 'admin';
+
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+
+    public function admin():bool{
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function student():bool{
+        return $this->role === self::ROLE_STUDENT;
+    }
+
     protected $fillable = [
         'full_name',
         'email',
         'phone',
         'password',
-        'role',
         'avatar_url',
         'grade',
         'target_icfes_score',

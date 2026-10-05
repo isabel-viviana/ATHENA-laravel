@@ -34,12 +34,18 @@ class DatabaseSeeder extends Seeder
 
         // 1. Usuarios (Tu usuario principal + 9 estudiantes aleatorios)
         $users = collect();
-        
+
         // Creación fija de tu perfil de pruebas
-        $users->push(User::factory()->create([
+        $admin = User::factory()->create([
             'full_name' => 'Juan Sebastian Acevedo Medina',
             'email' => 'juan.acevedo@athena.edu.co',
-        ]));
+        ]);
+        
+        $admin->role = User::ROLE_ADMIN;
+        $admin->save();
+
+        $users->push($admin);
+
 
         // Completa los 10 registros requeridos
         for ($i = 0; $i < 9; $i++) {
