@@ -33,7 +33,6 @@ Route::prefix('test-db')->group(function () {
 });
 
 // Modular System Routes (Phase 0 alignment)
-Route::prefix('auth')->group(base_path('routes/auth.php'));
 Route::prefix('users')->group(base_path('routes/users.php'));
 Route::prefix('subjects')->group(base_path('routes/subjects.php'));
 Route::prefix('topics')->group(base_path('routes/topics.php'));
