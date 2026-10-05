@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
@@ -43,9 +43,6 @@ class AuthController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'phone' => ['nullable', 'string', 'max:255'],
         ]);
-
-        // NO INCLUIR "role": la base de datos asigna student por defecto.
-        $user = User::create($data);
 
         return response()->json([
             'token' => $user->createToken('auth_token')->plainTextToken,
