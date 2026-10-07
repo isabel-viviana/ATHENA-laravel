@@ -18,25 +18,16 @@ class MockExamController extends Controller
         $this->examService = $examService;
     }
 
-    /**
-     * Obtiene el ID del usuario activo o utiliza 1 como fallback si no hay sesión iniciada.
-     */
     protected function getUserId(): int
     {
         return Auth::id() ?? 1;
     }
 
-    /**
-     * Vista de configuración del simulacro.
-     */
     public function mockConfig()
     {
         return view('mock_config');
     }
 
-    /**
-     * Inicia un simulacro rápido (exam_type = quick) y muestra la vista.
-     */
     public function mockQuick()
     {
         try {
@@ -52,9 +43,6 @@ class MockExamController extends Controller
         }
     }
 
-    /**
-     * Muestra las preguntas del simulacro en progreso.
-     */
     public function mockExam($id)
     {
         try {
@@ -66,9 +54,6 @@ class MockExamController extends Controller
         }
     }
 
-    /**
-     * Historial de simulacros del usuario.
-     */
     public function mockHistory()
     {
         try {
@@ -83,9 +68,6 @@ class MockExamController extends Controller
         }
     }
 
-    /**
-     * Resultados detallados de un simulacro finalizado.
-     */
     public function mockResults($id)
     {
         try {
@@ -97,9 +79,6 @@ class MockExamController extends Controller
         }
     }
 
-    /**
-     * Revisión pregunta por pregunta de un simulacro finalizado.
-     */
     public function mockReview($id)
     {
         try {

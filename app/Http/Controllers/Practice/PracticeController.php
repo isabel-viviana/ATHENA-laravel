@@ -17,25 +17,16 @@ class PracticeController extends Controller
         $this->examService = $examService;
     }
 
-    /**
-     * Obtiene el ID del usuario activo o utiliza 1 como fallback si no hay sesión iniciada.
-     */
     protected function getUserId(): int
     {
         return Auth::id() ?? 1;
     }
 
-    /**
-     * Vista de configuración de la práctica.
-     */
     public function practiceConfig()
     {
         return view('practice_config');
     }
 
-    /**
-     * Inicia una práctica completa (exam_type = practice) y muestra la vista con las preguntas.
-     */
     public function practiceFull(Request $request)
     {
         try {
@@ -59,9 +50,6 @@ class PracticeController extends Controller
         }
     }
 
-    /**
-     * Resultados de una práctica finalizada.
-     */
     public function practiceResults($id)
     {
         try {
@@ -73,9 +61,6 @@ class PracticeController extends Controller
         }
     }
 
-    /**
-     * Revisión pregunta por pregunta de una práctica finalizada.
-     */
     public function practiceReview($id)
     {
         try {
