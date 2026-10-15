@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Exam;
 
+use App\Exceptions\InsufficientQuestionsException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Exam\FinishExamRequest;
 use App\Http\Requests\Exam\StartExamRequest;
@@ -30,7 +31,7 @@ class ExamController extends Controller
 
     /**
      * POST /api/exams/configure
-     * Configura y crea un nuevo simulacro e intento inicial.
+     * Configura y crea un nuevo simulacro o práctica con preguntas asignadas.
      */
     public function configure(StartExamRequest $request): JsonResponse
     {
@@ -42,18 +43,27 @@ class ExamController extends Controller
                 'message' => 'Simulacro configurado e iniciado correctamente.',
                 'data' => $result,
             ], 201);
+        } catch (InsufficientQuestionsException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors' => [
+                    'available' => $e->getAvailable(),
+                    'required' => $e->getRequired(),
+                ],
+            ], 422);
         } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error al configurar el simulacro: ' . $e->getMessage(),
                 'errors' => [],
             ], 400);
-        } 
+        }
     }
 
     /**
      * GET /api/exams/{id}/questions
-     * Obtiene las preguntas asignadas a un intento de simulacro en progreso.
+     * Obtiene las preguntas asignadas a un intento de simulacro o práctica en progreso.
      */
     public function getQuestions(int $id): JsonResponse
     {

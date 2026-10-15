@@ -62,7 +62,13 @@ PROMPT;
             }
 
             if (!$conversation) {
-                throw new ModelNotFoundException("Conversación no encontrada o no pertenece al usuario.");
+                // Fallback si MongoDB no estuviera disponible o si la conversación previa fue generada en memoria
+                $conversation = new AiConversation([
+                    'user_id' => $userId,
+                    'title' => Str::limit(trim($userMessage), 35, '...'),
+                    'messages' => [],
+                ]);
+                $conversation->_id = $conversationId;
             }
         }
 

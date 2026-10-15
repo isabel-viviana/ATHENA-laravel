@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Subject;
+use App\Models\Topic;
 use App\Models\User;
 use App\Models\ExamAttempt;
 
@@ -29,18 +30,26 @@ class ExamConfig extends Model
 
     protected $fillable = [
         'user_id',
+        'topic_id',
         'exam_type',
         'difficulty',
+        'questions_count',
     ];
 
     protected $casts = [
         'exam_type' => 'string',
         'difficulty' => 'string',
+        'questions_count' => 'integer',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 
     public function subjects(): BelongsToMany

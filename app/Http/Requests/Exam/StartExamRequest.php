@@ -18,6 +18,7 @@ class StartExamRequest extends FormRequest
             'difficulty' => 'nullable|string|in:easy,medium,hard',
             'subject_ids' => 'nullable|array',
             'subject_ids.*' => 'exists:subjects,id',
+            'topic_id' => 'nullable|integer|exists:topics,id',
         ];
     }
 }
